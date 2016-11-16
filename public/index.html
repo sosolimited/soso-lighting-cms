@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>Soso Lighting CMS</title>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="css/style.css" crossorigin="anonymous">
+</head>
+<body>
+	<h1>Soso lighting cms system.</h1>
+
+	<!-- Start and Stop Time Selection -->
+	<div class="times-container">
+		<h3>On and Off Times</h3>
+		<span class="show-subtitle">Listed below are the start and stop times for the lighting app.</span>
+		<div id="onOffTimes" class="form-container">
+			<form id="on_off_controls" name="onOffControls">
+				<div class="radio-button">
+					<input type="radio" name="timeRadios" id="timeRadios1" value="0"> Always On
+				</div>
+				<div class="radio-button">
+					<input type="radio" name="timeRadios" id="timeRadios2" value="1"> Always Off
+				</div>
+
+				<div class="radio-button">
+				    <input type="radio" name="timeRadios" id="timeRadios3" value="2"> Sunset and Sunrise
+				</div>
+
+				<div class="radio-button">
+				    <input type="radio" name="timeRadios" id="timeRadios4" value="3"> Custom: use inputs below
+			    </div>
+
+			    <div class="custom-times">
+			    	<div class="on">
+						<label for="on_hour">On Hour (24hr):</label>
+						<input id="on_hour" class="" type="on_hour" name="on_hour" placeholder="00">
+
+						<label for="on_minute">On Minute:</label>
+						<input id="on_minute" class="" type="on_minute" name="on_minute" placeholder="00">
+					</div>
+
+					<div class="off">
+						<label for="off_hour">Off Hour (24hr):</label>
+						<input id="off_hour" class="" type="off_hour" name="off_hour" placeholder="00">
+						<label for="off_minute">Off Minute:</label>
+						<input id="off_minute" class="" type="off_minute" name="off_minute" placeholder="00">
+					</div>
+				</div>
+
+				<button type="submit" id="timesApply" class="h-color">Apply</button>
+			</form>
+
+		</div>
+	</div>
+	<!-- End of Start and Stop Time Selection -->
+
+	<!-- <script src="js/libs/socket.io.js"></script> -->
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/main.js"></script>
+</body>
+</html>

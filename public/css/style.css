@@ -1,0 +1,13 @@
+* {
+	font-family: Helvetica, Arial, Sans-Serif;
+}
+
+h1 {
+	color: #666666;
+}
+
+.form-container {
+	width: 600px;
+	padding: 30px;
+	background: lightgrey;
+}
