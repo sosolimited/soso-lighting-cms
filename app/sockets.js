@@ -21,18 +21,21 @@ function SocketServer( iServer ) {
 	this.server.on('connection', function(socket) {
 		that.newConnection(socket);
 
-		socket.on('updateOnOffTime', function(msg) {
+		socket.on('custom', function(msg) {
 			console.log('updateOnOffTime');
+			that.newData(msg.data);
 			that.handleUpdateOnOffTime(socket, msg);
 		});
 
-		socket.on('turnOn', function(msg) {
+		socket.on('alwaysOn', function(msg) {
 			console.log('turnOn');
+			that.newData(msg.data);
 			that.handleTurnOn(socket, msg);
 		});
 
-		socket.on('turnOff', function(msg) {
+		socket.on('alwaysOff', function(msg) {
 			console.log('turnOff');
+			that.newData(msg.data);
 			that.handleTurnOff(socket, msg);
 		});
 
@@ -44,12 +47,21 @@ function SocketServer( iServer ) {
 	});
 
 	this.newConnectionData;
+	this.saveData;
 }
 
 SocketServer.prototype.newConnection = function( iSocket ) {
 	// Add error checking for functions.
 	var data = (this.newConnectionData) ? this.newConnectionData() : "There doesn't seem to be any data.";
 	iSocket.emit('currentState', { data: data });
+}
+
+SocketServer.prototype.newData = function( iData ) {
+	if (this.saveData) {
+		this.saveData( iData );
+	} else {
+		console.log("New unsaved Data:", iData);
+	}
 }
 
 SocketServer.prototype.handleUpdateOnOffTime = function(iSender, iMsg) {

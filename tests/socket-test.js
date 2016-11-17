@@ -24,7 +24,7 @@ describe("CMS Socket.io Server", function() {
 		};
 
 		client.on('connect', function(data) {
-			client.emit('updateOnOffTime', { description: 'new on and off times', data: times });
+			client.emit('custom', { description: 'new on and off times', data: times });
 		});
 
 		client.on('onOffTime', function(msg) {
@@ -40,7 +40,7 @@ describe("CMS Socket.io Server", function() {
 		var client2 = io.connect(socketURL, options);
 
 		client.on('connect', function(data) {
-			client.emit('turnOn', { description: 'turn on lights', data: true });
+			client.emit('alwaysOn', { description: 'turn on lights', data: true });
 		});
 
 		client2.on('on', function(msg) {
@@ -57,7 +57,7 @@ describe("CMS Socket.io Server", function() {
 		var client2 = io.connect(socketURL, options);
 
 		client.on('connect', function(data) {
-			client.emit('turnOff', { description: 'turn off lights', data: true });
+			client.emit('alwaysOff', { description: 'turn off lights', data: true });
 		});
 
 		client2.on('off', function(msg) {

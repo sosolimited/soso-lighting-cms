@@ -22,7 +22,7 @@
 	for (var i = 0; i < radios.length; i++) {
 		var r  = radios[i];
 		r.onclick = function() {
-			if (this.value == 3) {
+			if (this.value == 'custom') {
 				enableTimeFields(true);
 			} else {
 				enableTimeFields(false);
@@ -34,7 +34,7 @@
 
 function formAction(iSocket) {
 	var ss = iSocket;
-	console.log(ss)
+
 	var eventHandler = function(e) {
 		e.preventDefault();
 
@@ -42,25 +42,7 @@ function formAction(iSocket) {
 
 		var message = { message: "light settings", data: timeData };
 
-		switch(timeData.mode) {
-			case 'alwaysOn':
-				ss.emit('turnOn', message);
-				break;
-			case 'alwaysOff':
-				ss.emit('turnOff', message);
-				break;
-			case 'sunsetSunrise':
-				console.log('Sunset sunrise is currently disabled.');
-				// ss.emit('sunsetSunrise', timeData);
-				break;
-			case 'custom':
-				ss.emit('updateOnOffTime', message);
-				break;
-			default:
-				console.log("mode doesn't match, not times will not be applied.");
-		}
-
-		// console.log(timeData)
+		ss.emit(timeData.mode, message);
 
 		console.log('Apply Clicked!');
 	}
@@ -68,40 +50,21 @@ function formAction(iSocket) {
 }
 
 function getTimeData() {
-	var mode = getMode( document.onOffControls.timeRadios.value );
+	var mode = document.onOffControls.timeRadios.value;
 
 	var data  = {
 		mode: mode,
 		on: {
-			time_hour: 18,
-			time_minute: 30
+			time_hour: document.getElementById("on_hour").value,
+			time_minute: document.getElementById("on_minute").value
 		},
 		off: {
-			time_hour: 5,
-			time_minute: 00
+			time_hour: document.getElementById("off_hour").value,
+			time_minute: document.getElementById("off_minute").value
 		}
 	};
 
 	return data;
-}
-
-function getMode(iNumber) {
-	switch(iNumber) {
-		case '0':
-			return 'alwaysOn';
-			break;
-		case '1':
-			return 'alwaysOff';
-			break;
-		case '2':
-			return 'sunsetSunrise';
-			break;
-		case '3':
-			return 'custom';
-			break;
-		default:
-			console.log('Unknown Mode!');
-	}
 }
 
 function enableTimeFields( iEnabled ) {
@@ -113,24 +76,10 @@ function enableTimeFields( iEnabled ) {
 
 function updateForm( iState ) {
 	enableTimeFields(false);
-	// check the mode
-	switch(iState.mode) {
-		case 'alwaysOn':
-			document.getElementById("timeRadios1").checked = true;
-			break;
-		case 'alwaysOff':
-			document.getElementById("timeRadios2").checked = true;
-			break;
-		case 'sunsetSunrise':
-			document.getElementById("timeRadios3").checked = true;
-			break;
-		case 'custom':
-			document.getElementById("timeRadios4").checked = true;
-			enableTimeFields(true)
-			break;
-		default:
-			console.log('Unknown Mode!');
-	}
+
+	document.getElementById(iState.mode).checked = true;
+
+	if (iState.mode == 'custom') enableTimeFields(true);
 
 	//update times
 	document.getElementById("on_hour").value = iState.on.time_hour;
