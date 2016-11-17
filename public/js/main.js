@@ -15,7 +15,7 @@
 
 	// Add submit event listener to form to prevent default.
 	var form = document.getElementById('on_off_controls');
-	form.addEventListener("submit", formAction);
+	form.addEventListener("submit", formAction(messaging) );
 
 	// Add click events to radio buttons
 	var radios = document.onOffControls.timeRadios;
@@ -32,13 +32,39 @@
 
 })();
 
-function formAction(e) {
-	e.preventDefault();
+function formAction(iSocket) {
+	var ss = iSocket;
+	console.log(ss)
+	var eventHandler = function(e) {
+		e.preventDefault();
 
-	var timeData = getTimeData();
-	console.log(timeData)
+		var timeData = getTimeData();
 
-	console.log('Apply Clicked!');
+		var message = { message: "light settings", data: timeData };
+
+		switch(timeData.mode) {
+			case 'alwaysOn':
+				ss.emit('turnOn', message);
+				break;
+			case 'alwaysOff':
+				ss.emit('turnOff', message);
+				break;
+			case 'sunsetSunrise':
+				console.log('Sunset sunrise is currently disabled.');
+				// ss.emit('sunsetSunrise', timeData);
+				break;
+			case 'custom':
+				ss.emit('updateOnOffTime', message);
+				break;
+			default:
+				console.log("mode doesn't match, not times will not be applied.");
+		}
+
+		// console.log(timeData)
+
+		console.log('Apply Clicked!');
+	}
+	return eventHandler;
 }
 
 function getTimeData() {

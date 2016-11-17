@@ -31,7 +31,7 @@ process.stdin.resume();
 
 function exitHandler(options, err) {
 	if (options.cleanup) logger.info('Clean app shutdown.');
-	if (err) logger.err(err.stack);
+	if (err) logger.error(err.stack);
 	if (options.exit) process.exit();
 }
 
