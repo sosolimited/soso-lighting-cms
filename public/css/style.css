@@ -11,3 +11,22 @@ h1 {
 	padding: 30px;
 	background: lightgrey;
 }
+
+.connection {
+	margin-top: 30px;
+	font-size: 12px;
+	height: 30px;
+}
+
+.connection[data-status="connecting"]:after {
+	color: orange;
+	content: 'Connecting to socket server...';
+}
+.connection[data-status="connected"]:after {
+	color: green;
+	content: 'Connected to server ✓';
+}
+.connection[data-status="disconnected"]:after {
+	color: red;
+	content: 'Disconnected from server ×';
+}

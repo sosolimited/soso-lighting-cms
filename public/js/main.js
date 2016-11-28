@@ -5,6 +5,7 @@
 
 	messaging.on('connect', function() {
 		console.log('Connected to server.');
+		$(".connection").attr('data-status', 'connected');
 	});
 
 	messaging.on('currentState', function(msg) {
@@ -12,6 +13,11 @@
 		console.log(msg.data);
 		updateForm(msg.data);
 	});
+
+	messaging.on('disconnect', function(msg){
+		console.log("disconnected from server");
+		$(".connection").attr('data-status', 'disconnected');
+	})
 
 	// Add submit event listener to form to prevent default.
 	var form = document.getElementById('on_off_controls');
@@ -29,6 +35,14 @@
 			}
 		};
 	}
+
+	// add click events to buttons
+	$(".chime-button").click(function(){
+		messaging.emit('chime', {
+			id: $(this).attr('data-id'),
+			title: $(this).attr('data-title')
+		});
+	});
 
 })();
 

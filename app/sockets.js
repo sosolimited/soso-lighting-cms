@@ -22,7 +22,7 @@ function SocketServer( iServer ) {
 		that.newConnection(socket);
 
 		socket.on('custom', function(msg) {
-			console.log('custom received');
+			console.log('custom time range received');
 			that.newData(msg.data);
 			that.handleUpdateOnOffTime(socket, msg);
 		});

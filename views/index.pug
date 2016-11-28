@@ -63,13 +63,16 @@
 	<span class="show-subtitle">Play special animations</span>
 	<div class="form-container">
 		- for(var x =0; x<chimes.length; x++)
-				button(data-id=chimes[x].id)= chimes[x].title
+				button(class="chime-button", data-id=chimes[x].id, data-title=chimes[x].title)= chimes[x].title
 				br
 				br
 	</div>
 
+	<div data-status="connecting" class="connection"></div>
+
 	<!-- <script src="js/libs/socket.io.js"></script> -->
 	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/jquery-3.1.1.min.js"></script>
 	<script src="js/main.js"></script>
 </body>
 </html>
