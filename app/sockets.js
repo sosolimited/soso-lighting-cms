@@ -22,25 +22,25 @@ function SocketServer( iServer ) {
 		that.newConnection(socket);
 
 		socket.on('custom', function(msg) {
-			console.log('updateOnOffTime');
+			console.log('custom received');
 			that.newData(msg.data);
 			that.handleUpdateOnOffTime(socket, msg);
 		});
 
 		socket.on('alwaysOn', function(msg) {
-			console.log('turnOn');
+			console.log('alwaysOn received');
 			that.newData(msg.data);
 			that.handleTurnOn(socket, msg);
 		});
 
 		socket.on('alwaysOff', function(msg) {
-			console.log('turnOff');
+			console.log('alwaysOff received');
 			that.newData(msg.data);
 			that.handleTurnOff(socket, msg);
 		});
 
 		socket.on('chime', function(msg) {
-			console.log('chime');
+			console.log(`chime received (${msg.id})`);
 			that.handleChime(socket, msg);
 		});
 
@@ -83,15 +83,15 @@ SocketServer.prototype.handleUpdateOnOffTime = function(iSender, iMsg) {
 
 SocketServer.prototype.handleTurnOn = function(iSender, iMsg) {
 
-	this.server.emit('on', { response: 'turnOn received', data: true });
+	this.server.emit('on', { response: 'turnOn received', data: {} });
 };
 
 SocketServer.prototype.handleTurnOff = function(iSender, iMsg) {
 
-	this.server.emit('off', { response: 'turnOff received', data: true });
+	this.server.emit('off', { response: 'turnOff received', data: {} });
 };
 
 SocketServer.prototype.handleChime = function(iSender, iMsg) {
 
-	this.server.emit('playChime', { response: 'chime received', data: iMsg.data });
+	this.server.emit('playChime', { response: 'chime received', data: iMsg });
 };

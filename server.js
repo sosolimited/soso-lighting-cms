@@ -3,6 +3,7 @@ var http =  	require('http');
 var express = 	require('express');
 var app = 		express();
 var logger = 	require('./app/logger.js');
+var chimes = require('./config/chimes.js');
 
 // App Variables
 var state; // used to store app state during run time.
@@ -11,6 +12,9 @@ var port = 8080;
 
 // APP SETUP
 // =====================
+
+// pug templates
+app.set('view engine', 'pug')
 
 // Setup the http server and tell it to listen on specified port.
 var server = http.createServer(app);
@@ -28,6 +32,11 @@ socketServer.saveData = setState;
 
 // set public directory for static file serving on the http server.
 app.use( express.static(__dirname + '/public') );
+
+// root / renders pug template
+app.get('/', function (req, res) {
+  res.render('index', { chimes: chimes });
+});
 
 
 // ADDITIONAL FUNCTIONS
