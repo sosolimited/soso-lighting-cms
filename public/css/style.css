@@ -1,20 +1,41 @@
-* {
+@import 'reset.css';
+
+html {
 	font-family: Helvetica, Arial, Sans-Serif;
+	font-size: 18px;
 }
 
 h1 {
-	color: #666666;
+	font-size: 2em;
+	margin-bottom: 0.5em;
+}
+h3 {
+	font-size: 1.4em;
+	margin-bottom: 0.25em;
+}
+
+button {
+	font-size: 1em;
+}
+
+input {
+	margin-bottom: 0.5em;
+}
+
+#container {
+	width: 600px;
+	margin: 0 auto;
+	padding-top: 1.25em;
 }
 
 .form-container {
-	width: 600px;
 	padding: 30px;
 	background: lightgrey;
 }
 
 .connection {
 	margin-top: 30px;
-	font-size: 12px;
+	font-size: 0.75em;
 	height: 30px;
 }
 

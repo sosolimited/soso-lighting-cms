@@ -11,64 +11,75 @@
 	<link rel="stylesheet" href="css/style.css" crossorigin="anonymous">
 </head>
 <body>
-	<h1>Soso Lighting CMS</h1>
+	<div id="container">
+		<h1>Soso Lighting CMS</h1>
 
-	<!-- Start and Stop Time Selection -->
-	<div class="times-container">
-		<h3>On and Off Times</h3>
-		<span class="show-subtitle">Control the lighting app on/off state</span>
-		<div id="onOffTimes" class="form-container">
-			<form id="on_off_controls" name="onOffControls">
-				<div class="radio-button">
-					<input type="radio" name="timeRadios" id="alwaysOn" value="alwaysOn"> Always On
-				</div>
-				<div class="radio-button">
-					<input type="radio" name="timeRadios" id="alwaysOff" value="alwaysOff"> Always Off
-				</div>
+		<!-- Start and Stop Time Selection -->
+		<div class="times-container">
+			<h3>On and Off Times</h3>
+			<span class="show-subtitle">Control the lighting app on/off state</span>
+			<br /><br />
 
-				<div class="radio-button">
-					<input type="radio" name="timeRadios" id="sunsetSunrise" value="sunsetSunrise"> Sunset and Sunrise
-				</div>
+			<div id="onOffTimes" class="form-container">
+				<form id="on_off_controls" name="onOffControls">
+					<div class="radio-button">
+						<input type="radio" name="timeRadios" id="alwaysOn" value="alwaysOn"> Always On
+					</div>
+					<div class="radio-button">
+						<input type="radio" name="timeRadios" id="alwaysOff" value="alwaysOff"> Always Off
+					</div>
 
-				<div class="radio-button">
-					<input type="radio" name="timeRadios" id="custom" value="custom"> Custom: use inputs below
-				</div>
+					<div class="radio-button">
+						<input type="radio" name="timeRadios" id="sunsetSunrise" value="sunsetSunrise"> Sunset and Sunrise
+					</div>
+
+					<div class="radio-button">
+						<input type="radio" name="timeRadios" id="custom" value="custom"> Custom (set below)
+					</div>
+
+					<br />
 
 					<div class="custom-times">
 						<div class="on">
-						<label for="on_hour">On Hour (24hr):</label>
-						<input id="on_hour" class="" type="on_hour" name="on_hour" placeholder="00">
+							<label for="on_hour">On Hour (24hr):</label>
+							<input id="on_hour" class="" type="on_hour" name="on_hour" placeholder="00">
 
-						<label for="on_minute">On Minute:</label>
-						<input id="on_minute" class="" type="on_minute" name="on_minute" placeholder="00">
+							<label for="on_minute">On Minute:</label>
+							<input id="on_minute" class="" type="on_minute" name="on_minute" placeholder="00">
+						</div>
+
+						<div class="off">
+							<label for="off_hour">Off Hour (24hr):</label>
+							<input id="off_hour" class="" type="off_hour" name="off_hour" placeholder="00">
+							<label for="off_minute">Off Minute:</label>
+							<input id="off_minute" class="" type="off_minute" name="off_minute" placeholder="00">
+						</div>
 					</div>
 
-					<div class="off">
-						<label for="off_hour">Off Hour (24hr):</label>
-						<input id="off_hour" class="" type="off_hour" name="off_hour" placeholder="00">
-						<label for="off_minute">Off Minute:</label>
-						<input id="off_minute" class="" type="off_minute" name="off_minute" placeholder="00">
-					</div>
-				</div>
+					<br />
 
-				<button type="submit" id="timesApply" class="h-color">Apply</button>
-			</form>
+					<button type="submit" id="timesApply" class="h-color">Apply</button>
+				</form>
 
+			</div>
 		</div>
-	</div>
-	<!-- End of Start and Stop Time Selection -->
-	<br />
-	<br />
-	<h3>Chimes</h3>
-	<span class="show-subtitle">Play special animations</span>
-	<div class="form-container">
-		- for(var x =0; x<chimes.length; x++)
-				button(class="chime-button", data-id=chimes[x].id, data-title=chimes[x].title)= chimes[x].title
-				br
-				br
-	</div>
+		<!-- End of Start and Stop Time Selection -->
+		<br />
+		<br />
+		<h3>Chimes</h3>
+		<span class="show-subtitle">Cue special animations in the lighting app</span>
+		<br /><br />
 
-	<div data-status="connecting" class="connection"></div>
+		<div class="form-container">
+			- for(var x =0; x<chimes.length; x++)
+					button(class="chime-button", data-id=chimes[x].id, data-title=chimes[x].title)= chimes[x].title
+					if( x!=chimes.length -1)
+						br
+						br
+		</div>
+
+		<div data-status="connecting" class="connection"></div>
+	</div>
 
 	<!-- <script src="js/libs/socket.io.js"></script> -->
 	<script src="/socket.io/socket.io.js"></script>
