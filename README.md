@@ -25,9 +25,9 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 
 **chime** - play a special chime as specified by text id
 ```
-    {
-        "id": "pulse"
-    }
+{
+    "id": "pulse"
+}
 ```
 
 ## Server can emit:
@@ -51,9 +51,9 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 
 **chime** - Play a chime
 ```
-    {
-        "id": "pulse"
-    }
+{
+    "id": "pulse"
+}
 ```
 
 **current state** - Emitted on new connection. Current state of the server.
