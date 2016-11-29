@@ -2,7 +2,7 @@
 CMS / Web GUI to control lighting applications.
 
 # Messaging Protocol
-The server shuttles socketio messages between any controlling clients (e.g. web CMS) and the lighting control app. There are messages the server can receive, and messages the lighting control app should expect to receive from the server. Some messages require/attach meta data.
+The server shuttles socketio messages between any controlling clients (e.g. web CMS) and the lighting control app. There are messages the server can receive from controlling clients, and messages the lighting control app should expect to receive from the server. Some messages require/attach meta data. See below for details.
 
 ## Server can receive:
 **on** - turn the lights on
@@ -12,13 +12,13 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 **schedule** - set the on/off schedule (24hr time)
 ```
 {
-    on: {
-        time_hour: 18,
-        time_minute: 30
+    "on": {
+        "time_hour": 18,
+        "time_minute": 30
     },
-    off: {
-        time_hour: 6,
-        time_minute: 30
+    "off": {
+        "time_hour": 6,
+        "time_minute": 30
     }
 }
 ```
@@ -26,7 +26,7 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 **chime** - play a special chime as specified by text id
 ```
     {
-        id: 'pulse'
+        "id": "pulse"
     }
 ```
 
@@ -38,13 +38,13 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 **schedule** - set the on/off schedule (24hr time)
 ```
 {
-    on: {
-        time_hour: 18,
-        time_minute: 30
+    "on": {
+        "time_hour": 18,
+        "time_minute": 30
     },
-    off: {
-        time_hour: 6,
-        time_minute: 30
+    "off": {
+        "time_hour": 6,
+        "time_minute": 30
     }
 }
 ```
@@ -52,21 +52,21 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 **chime** - Play a chime
 ```
     {
-        id: 'pulse'
+        "id": "pulse"
     }
 ```
 
 **current state** - Emitted on new connection. Current state of the server.
 ```
 {
-    mode: "schedule" // schedule | on | off
-    on: {
-        time_hour: 18,
-        time_minute: 30
+    "mode": "schedule" // schedule | on | off
+    "on": {
+        "time_hour": 18,
+        "time_minute": 30
     },
-    off: {
-        time_hour: 6,
-        time_minute: 30
+    "off": {
+        "time_hour": 6,
+        "time_minute": 30
     }
 }
 ```

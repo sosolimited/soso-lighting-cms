@@ -68,12 +68,12 @@ function getTimeData() {
 	var data  = {
 		mode: document.onOffControls.timeRadios.value,
 		on: {
-			time_hour: document.getElementById("on_hour").value,
-			time_minute: document.getElementById("on_minute").value
+			time_hour: parseInt( document.getElementById("on_hour").value ),
+			time_minute: parseInt( document.getElementById("on_minute").value )
 		},
 		off: {
-			time_hour: document.getElementById("off_hour").value,
-			time_minute: document.getElementById("off_minute").value
+			time_hour: parseInt( document.getElementById("off_hour").value ),
+			time_minute: parseInt( document.getElementById("off_minute").value )
 		}
 	};
 

@@ -1,10 +1,13 @@
 // Required components.
 var http =  	require('http');
 var express = 	require('express');
+
 var app = 		express();
 var logger = 	require('./app/logger.js');
 var config = require('./config/config.js');
-var db = new require('./app/simpleDB.js')(__dirname + '/config/state.json');
+
+var SimpleDB = require('./app/simpleDB.js');
+var db = new SimpleDB(__dirname + '/config/state.json');
 
 // App Variables
 var state; // used to store app state during run time.
@@ -13,7 +16,7 @@ var state; // used to store app state during run time.
 // =====================
 
 // pug templates
-app.set('view engine', 'pug')
+app.set('view engine', 'pug');
 
 // Setup the http server and tell it to listen on specified port.
 var server = http.createServer(app);
@@ -32,27 +35,34 @@ app.get('/', function (req, res) {
 // Setup the socket.io server by passing the http server to it.
 var socketServer = require('./app/sockets.js')( server );
 
-// Let the socket server know how to handle the state.
-// Write to simple JSON object store on disk for persistence
-socketServer.setSaveStateFunc( function(data){
-	return new Promise(function(resolve, reject){
-		state = data;
-		resolve();
+// read in existing state.json or create new one
+db.init().then(function(){
+	// If db does not contain state, save default settings.
+	// This can happen on first time server startup.
+	db.getObject('state').then(function(){
+		logger.info('loaded state.json from disk');
+	},function(err){
+		logger.info("filling state.json file with default configuration");
+
+		db.setObject('state', config.default_state).catch(function(err){
+			logger.error('error while saving default state');
+			throw err;
+		});
 	});
+}, function(err){
+	logger.error('error while initializing SimpleDB');
+	throw err;
 });
 
-socketServer.setGetStateFunc( function(){
-	return new Promise(function(resolve, reject){
-		if( !state ){
-			state = {
-				mode: 'schedule',
-				on: { time_hour: 18, time_minute: 30 },
-				off: { time_hour: 5, time_minute: 00 }
-			};
-		}
 
-		resolve(state);
-	});
+// Let the socket server know how to handle the state.
+// Write to simple JSON object store on disk for persistence
+socketServer.handleSaveState( function(data){
+	return db.setObject('state', data);
+});
+
+socketServer.handleGetState( function(){
+	return db.getObject('state');
 });
 
 // APP SHUTDOWN HANDLING

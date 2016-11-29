@@ -42,9 +42,9 @@ function SocketServer( iServer ) {
 				state.off = msg.off;
 				state.mode = 'schedule';
 
-				this.server.emit('schedule', { on: state.on, off: state.off });
+				that.server.emit('schedule', { on: state.on, off: state.off });
 
-				saveState(state);
+				that.saveState(state);
 			});
 		});
 
@@ -53,9 +53,9 @@ function SocketServer( iServer ) {
 
 			that.getState().then(function(state){
 				state.mode = 'on';
-				this.server.emit('on');
+				that.server.emit('on');
 
-				saveState(state);
+				that.saveState(state);
 			});
 		});
 
@@ -64,16 +64,16 @@ function SocketServer( iServer ) {
 
 			that.getState().then(function(state){
 				state.mode = 'off';
-				this.server.emit('off');
+				that.server.emit('off');
 
-				saveState(state);
+				that.saveState(state);
 			});
 		});
 
 		socket.on('chime', function(msg) {
 			logger.info('socketio `chime` received (id: ' + msg.id + ')');
 
-			this.server.emit('chime', msg);
+			that.server.emit('chime', msg);
 		});
 
 	});
@@ -83,5 +83,5 @@ function SocketServer( iServer ) {
 }
 
 // allow interface for saving/getting state data to be set externally
-SocketServer.prototype.setSaveStateFunc = function(prom){ this.saveState = prom; }
-SocketServer.prototype.setGetStateFunc = function(prom){ this.getState = prom; }
+SocketServer.prototype.handleSaveState = function(prom){ this.saveState = prom; }
+SocketServer.prototype.handleGetState = function(prom){ this.getState = prom; }

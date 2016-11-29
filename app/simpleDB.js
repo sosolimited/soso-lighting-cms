@@ -8,66 +8,78 @@ var fs = require('fs');
 function SimpleDB(filename){
 	this.cache = {}; // keeps current version of store in memory
 	this.filename = filename;
+}
 
-	// check if file exists first
-	fs.open(filename, 'wx', function(err, fd){
-		if( err ){
-			// already exists
-			if( err.code == "EEXIST" ){
+SimpleDB.prototype.init = function(){
+	var that = this;
 
-				var contents = "";
+	return new Promise(function(resolve, reject){
+		// check if file exists first
+		fs.open(that.filename, 'wx', function(err, fd){
+			if( err ){
+				// already exists
+				if( err.code == "EEXIST" ){
+					// initially read file contents
+					fs.readFile(that.filename, function(err, data){
+						if( err ){
+							logger.error(err.message);
+							reject(err);
+							return;
+						}
 
-				// initially read file contents
-				fs.readFile(filename, function(err, data){
+						that.cache = JSON.parse(data);
+
+						resolve();
+					});
+				}
+				// some other error
+				else {
+					logger.error(err.message);
+					reject(err);
+				}
+			}
+			// file doesn't exist yet; write blank data
+			else {
+				fs.write(fd, JSON.stringify(that.cache), function(err){
 					if( err ){
 						logger.error(err.message);
-						throw err;
+						reject(err);
+						return;
 					}
 
-					this.cache = JSON.parse(data);
+					fs.close(fd, function(){
+						resolve();
+					});
 				});
 			}
-			// some other error
-			else {
-				logger.error(err.message);
-				throw err;
-			}
-		}
-		// file doesn't exist yet; write blank data
-		else {
-			fs.write(fd, JSON.stringify(cache), function(err){
-				if( err ){
-					logger.error(err.message);
-				}
-
-				fs.close(fd);
-			});
-		}
-	})
+		});
+	});
 }
 
 SimpleDB.prototype.setObject = function(id, data){
+	var that = this;
 	return new Promise(function(resolve, reject){
-		cache[id] = data;
+		that.cache[id] = data;
 
-		fs.writeFile(filename, JSON.stringify(cache), function(err){
+		fs.writeFile(that.filename, JSON.stringify(that.cache), function(err){
 			if( err ){
 				reject(err);
 				return;
 			}
 
-			resolve( cache[id] );
+			resolve( that.cache[id] );
 		});
 	});
 }
 
 SimpleDB.prototype.getObject = function(id){
+	var that = this;
 	return new Promise(function(resolve, reject){
-		if( !cache.hasOwnProperty(id) ){
+		if( !that.cache.hasOwnProperty(id) ){
 			reject('id not found in store');
 		}
 
-		resolve( cache[id] );
+		resolve( that.cache[id] );
 	});
 }
 
