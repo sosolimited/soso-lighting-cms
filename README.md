@@ -10,7 +10,7 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 **off** - turn the lights off
 
 **schedule** - set the on/off schedule (24hr time)
-```
+```json
 {
     "on": {
         "time_hour": 18,
@@ -24,7 +24,7 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 ```
 
 **chime** - play a special chime as specified by text id
-```
+```json
 {
     "id": "pulse"
 }
@@ -36,7 +36,7 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 **off** - turn the lights off
 
 **schedule** - set the on/off schedule (24hr time)
-```
+```json
 {
     "on": {
         "time_hour": 18,
@@ -50,14 +50,14 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 ```
 
 **chime** - Play a chime
-```
+```json
 {
     "id": "pulse"
 }
 ```
 
 **current state** - Emitted on new connection. Current state of the server.
-```
+```javascript
 {
     "mode": "schedule" // schedule | on | off
     "on": {
