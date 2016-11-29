@@ -35,6 +35,9 @@ app.get('/', function (req, res) {
 // Setup the socket.io server by passing the http server to it.
 var socketServer = require('./app/sockets.js')( server );
 
+// STATE.JSON FILE STORE SETUP
+// =====================
+
 // read in existing state.json or create new one
 db.init().then(function(){
 	// If db does not contain state, save default settings.
