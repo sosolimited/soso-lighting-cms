@@ -23,18 +23,18 @@
 			<div id="onOffTimes" class="form-container">
 				<form id="on_off_controls" name="onOffControls">
 					<div class="radio-button">
-						<input type="radio" name="timeRadios" id="alwaysOn" value="alwaysOn"> Always On
+						<input type="radio" name="timeRadios" value="on"> Always On
 					</div>
 					<div class="radio-button">
-						<input type="radio" name="timeRadios" id="alwaysOff" value="alwaysOff"> Always Off
-					</div>
-
-					<div class="radio-button">
-						<input type="radio" name="timeRadios" id="sunsetSunrise" value="sunsetSunrise"> Sunset and Sunrise
+						<input type="radio" name="timeRadios" value="off"> Always Off
 					</div>
 
+					//<div class="radio-button">
+					//	<input type="radio" name="timeRadios" value="sunsetSunrise"> Sunset and Sunrise
+					//</div>
+
 					<div class="radio-button">
-						<input type="radio" name="timeRadios" id="custom" value="custom"> Custom (set below)
+						<input type="radio" name="timeRadios" value="schedule"> Custom (set below)
 					</div>
 
 					<br />
@@ -42,17 +42,17 @@
 					<div class="custom-times">
 						<div class="on">
 							<label for="on_hour">On Hour (24hr):</label>
-							<input id="on_hour" class="" type="on_hour" name="on_hour" placeholder="00">
+							<input id="on_hour" class="" type="on_hour" name="on_hour">
 
 							<label for="on_minute">On Minute:</label>
-							<input id="on_minute" class="" type="on_minute" name="on_minute" placeholder="00">
+							<input id="on_minute" class="" type="on_minute" name="on_minute">
 						</div>
 
 						<div class="off">
 							<label for="off_hour">Off Hour (24hr):</label>
-							<input id="off_hour" class="" type="off_hour" name="off_hour" placeholder="00">
+							<input id="off_hour" class="" type="off_hour" name="off_hour">
 							<label for="off_minute">Off Minute:</label>
-							<input id="off_minute" class="" type="off_minute" name="off_minute" placeholder="00">
+							<input id="off_minute" class="" type="off_minute" name="off_minute">
 						</div>
 					</div>
 

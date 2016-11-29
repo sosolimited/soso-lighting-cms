@@ -20,6 +20,11 @@ button {
 
 input {
 	margin-bottom: 0.5em;
+	border: none;
+}
+input:disabled {
+	background-color: #ededed;
+	color: #bbb;
 }
 
 #container {

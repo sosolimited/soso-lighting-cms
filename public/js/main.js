@@ -8,10 +8,10 @@
 		$(".connection").attr('data-status', 'connected');
 	});
 
-	messaging.on('currentState', function(msg) {
-		console.log('Current State');
-		console.log(msg.data);
-		updateForm(msg.data);
+	messaging.on('current state', function(msg) {
+		console.log('Current state');
+		console.log(msg);
+		updateForm(msg);
 	});
 
 	messaging.on('disconnect', function(msg){
@@ -28,7 +28,7 @@
 	for (var i = 0; i < radios.length; i++) {
 		var r  = radios[i];
 		r.onclick = function() {
-			if (this.value == 'custom') {
+			if (this.value == 'schedule') {
 				enableTimeFields(true);
 			} else {
 				enableTimeFields(false);
@@ -47,16 +47,17 @@
 })();
 
 function formAction(iSocket) {
-	var ss = iSocket;
-
 	var eventHandler = function(e) {
 		e.preventDefault();
 
 		var timeData = getTimeData();
 
-		var message = { message: "light settings", data: timeData };
-
-		ss.emit(timeData.mode, message);
+		if( timeData.mode == 'schedule' ){
+			iSocket.emit('schedule', { on: timeData.on, off: timeData.off });
+		}
+		else {
+			iSocket.emit(timeData.mode);
+		}
 
 		console.log('Apply Clicked!');
 	}
@@ -64,10 +65,8 @@ function formAction(iSocket) {
 }
 
 function getTimeData() {
-	var mode = document.onOffControls.timeRadios.value;
-
 	var data  = {
-		mode: mode,
+		mode: document.onOffControls.timeRadios.value,
 		on: {
 			time_hour: document.getElementById("on_hour").value,
 			time_minute: document.getElementById("on_minute").value
@@ -91,9 +90,9 @@ function enableTimeFields( iEnabled ) {
 function updateForm( iState ) {
 	enableTimeFields(false);
 
-	document.getElementById(iState.mode).checked = true;
+	$("input[value='" + iState.mode + "']")[0].checked = true;
 
-	if (iState.mode == 'custom') enableTimeFields(true);
+	if (iState.mode == 'schedule') enableTimeFields(true);
 
 	//update times
 	document.getElementById("on_hour").value = iState.on.time_hour;

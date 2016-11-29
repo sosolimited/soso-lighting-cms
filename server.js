@@ -3,12 +3,10 @@ var http =  	require('http');
 var express = 	require('express');
 var app = 		express();
 var logger = 	require('./app/logger.js');
-var chimes = require('./config/chimes.js');
+var config = require('./config/config.js');
 
 // App Variables
 var state; // used to store app state during run time.
-var port = 8080;
-
 
 // APP SETUP
 // =====================
@@ -18,45 +16,43 @@ app.set('view engine', 'pug')
 
 // Setup the http server and tell it to listen on specified port.
 var server = http.createServer(app);
-server.listen(port);
+server.listen( config.http_port );
 
-logger.info('Sosolimited lighting CMS. Listening on:', port);
-
-// Setup the socket.io server by passing the http server to it.
-var socketServer = require('./app/sockets.js')( server );
-
-// Let the socket server know how to handle the state.
-socketServer.newConnectionData = getState;
-socketServer.saveData = setState;
-
+logger.info('Lighting CMS listening on: http://127.0.0.1:' + config.http_port);
 
 // set public directory for static file serving on the http server.
 app.use( express.static(__dirname + '/public') );
 
 // root / renders pug template
 app.get('/', function (req, res) {
-  res.render('index', { chimes: chimes });
+  res.render('index', { chimes: config.chimes });
 });
 
+// Setup the socket.io server by passing the http server to it.
+var socketServer = require('./app/sockets.js')( server );
 
-// ADDITIONAL FUNCTIONS
-// =====================
+// Let the socket server know how to handle the state.
+// Temp until simple DB integration
+socketServer.setSaveStateFunc( function(data){
+	return new Promise(function(resolve, reject){
+		state = data;
+		resolve();
+	});
+});
 
-// Get and set functions for the systems state.
-// To be passed to the socket server.
-function getState() {
-	if (!state) {
-		state = { mode: 'custom', on: { time_hour: 18, time_minute: 30 }, off: { time_hour: 5, time_minute: 00 }};
-	}
-	return state;
-}
+socketServer.setGetStateFunc( function(){
+	return new Promise(function(resolve, reject){
+		if( !state ){
+			state = {
+				mode: 'schedule',
+				on: { time_hour: 18, time_minute: 30 },
+				off: { time_hour: 5, time_minute: 00 }
+			};
+		}
 
-function setState( iState ) {
-	logger.info("State Saved");
-	// console.log(iState)
-	state = iState;
-}
-
+		resolve(state);
+	});
+});
 
 // APP SHUTDOWN HANDLING
 // =====================

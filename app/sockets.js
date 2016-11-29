@@ -1,5 +1,7 @@
 //Socket.io Controller
 var io = require('socket.io');
+var config = require('../config/config.js');
+var logger = require('./logger.js');
 
 /**
  * Module exports.
@@ -11,60 +13,81 @@ module.exports = SocketServer;
 * Interface
 */
 
+var empty_promise = function(){
+	return new Promise(function(resolve, reject){
+		reject();
+	});
+}
+
 function SocketServer( iServer ) {
 	if (!(this instanceof SocketServer)) return new SocketServer( iServer );
 	var that = this;
 
 	this.server = io.listen( iServer );
-	console.log('Socket Server Listening');
+	logger.info('socketio listening');
 
 	this.server.on('connection', function(socket) {
-		that.newConnection(socket);
+		logger.info('socketio new client connection');
 
-		socket.on('custom', function(msg) {
-			console.log('custom time range received');
-			that.newData(msg.data);
-			that.handleUpdateOnOffTime(socket, msg);
+		// send state to new connection
+		that.getState().then(function(state){
+			socket.emit('current state', state );
 		});
 
-		socket.on('alwaysOn', function(msg) {
-			console.log('alwaysOn received');
-			that.newData(msg.data);
-			that.handleTurnOn(socket, msg);
+		socket.on('schedule', function(msg) {
+			logger.info('socketio `schedule` received');
+			console.log(msg);
+
+			that.getState().then(function(state){
+				state.on = msg.on;
+				state.off = msg.off;
+				state.mode = 'schedule';
+
+				this.server.emit('schedule', { on: state.on, off: state.off });
+
+				saveState(state);
+			});
 		});
 
-		socket.on('alwaysOff', function(msg) {
-			console.log('alwaysOff received');
-			that.newData(msg.data);
-			that.handleTurnOff(socket, msg);
+		socket.on('on', function() {
+			logger.info('socketio `on` received');
+
+			that.getState().then(function(state){
+				state.mode = 'on';
+				this.server.emit('on');
+
+				saveState(state);
+			});
+		});
+
+		socket.on('off', function(msg) {
+			logger.info('socketio `off` received');
+
+			that.getState().then(function(state){
+				state.mode = 'off';
+				this.server.emit('off');
+
+				saveState(state);
+			});
 		});
 
 		socket.on('chime', function(msg) {
-			console.log(`chime received (${msg.id})`);
-			that.handleChime(socket, msg);
+			logger.info('socketio `chime` received (id: ' + msg.id + ')');
+
+			this.server.emit('chime', msg);
 		});
 
 	});
 
-	this.newConnectionData;
-	this.saveData;
+	this.saveState = empty_promise;
+	this.getState = empty_promise;
 }
 
-SocketServer.prototype.newConnection = function( iSocket ) {
-	// Add error checking for functions.
-	var data = (this.newConnectionData) ? this.newConnectionData() : "There doesn't seem to be any data.";
-	iSocket.emit('currentState', { data: data });
-}
+// allow interface for saving/getting state data to be set externally
+SocketServer.prototype.setSaveStateFunc = function(prom){ this.saveState = prom; }
+SocketServer.prototype.setGetStateFunc = function(prom){ this.getState = prom; }
 
-SocketServer.prototype.newData = function( iData ) {
-	if (this.saveData) {
-		this.saveData( iData );
-	} else {
-		console.log("New unsaved Data:", iData);
-	}
-}
-
-SocketServer.prototype.handleUpdateOnOffTime = function(iSender, iMsg) {
+SocketServer.prototype.handleUpdateSchedule = function(iMsg) {
 
 	// handle any data manipulation.
 	var times = {
@@ -78,20 +101,5 @@ SocketServer.prototype.handleUpdateOnOffTime = function(iSender, iMsg) {
 		}
 	};
 
-	this.server.emit('onOffTime', { response: 'updateOnOffTime received', data: times });
-};
-
-SocketServer.prototype.handleTurnOn = function(iSender, iMsg) {
-
-	this.server.emit('on', { response: 'turnOn received', data: {} });
-};
-
-SocketServer.prototype.handleTurnOff = function(iSender, iMsg) {
-
-	this.server.emit('off', { response: 'turnOff received', data: {} });
-};
-
-SocketServer.prototype.handleChime = function(iSender, iMsg) {
-
-	this.server.emit('playChime', { response: 'chime received', data: iMsg });
+	this.server.emit('schedule', times);
 };
