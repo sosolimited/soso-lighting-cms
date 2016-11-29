@@ -4,6 +4,7 @@ var express = 	require('express');
 var app = 		express();
 var logger = 	require('./app/logger.js');
 var config = require('./config/config.js');
+var db = new require('./app/simpleDB.js')(__dirname + '/config/state.json');
 
 // App Variables
 var state; // used to store app state during run time.
@@ -32,7 +33,7 @@ app.get('/', function (req, res) {
 var socketServer = require('./app/sockets.js')( server );
 
 // Let the socket server know how to handle the state.
-// Temp until simple DB integration
+// Write to simple JSON object store on disk for persistence
 socketServer.setSaveStateFunc( function(data){
 	return new Promise(function(resolve, reject){
 		state = data;

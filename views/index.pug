@@ -64,21 +64,21 @@
 			</div>
 		</div>
 		<!-- End of Start and Stop Time Selection -->
-		<br />
-		<br />
-		<h3>Chimes</h3>
-		<span class="show-subtitle">Cue special animations in the lighting app</span>
-		<br /><br />
+		br
+		br
+		h3 Chimes
+		span(class="show-subtitle") Cue special animations in the lighting app
+		br
+		br
 
-		<div class="form-container">
+		div(class="form-container")
 			- for(var x =0; x<chimes.length; x++)
 					button(class="chime-button", data-id=chimes[x].id, data-title=chimes[x].title)= chimes[x].title
-					if( x!=chimes.length -1)
+					if( x != chimes.length - 1 )
 						br
 						br
-		</div>
 
-		<div data-status="connecting" class="connection"></div>
+		div(data-status="connecting" class="connection")
 	</div>
 
 	<!-- <script src="js/libs/socket.io.js"></script> -->

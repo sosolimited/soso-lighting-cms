@@ -36,7 +36,6 @@ function SocketServer( iServer ) {
 
 		socket.on('schedule', function(msg) {
 			logger.info('socketio `schedule` received');
-			console.log(msg);
 
 			that.getState().then(function(state){
 				state.on = msg.on;
