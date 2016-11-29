@@ -86,20 +86,3 @@ function SocketServer( iServer ) {
 // allow interface for saving/getting state data to be set externally
 SocketServer.prototype.setSaveStateFunc = function(prom){ this.saveState = prom; }
 SocketServer.prototype.setGetStateFunc = function(prom){ this.getState = prom; }
-
-SocketServer.prototype.handleUpdateSchedule = function(iMsg) {
-
-	// handle any data manipulation.
-	var times = {
-		on: {
-			time_hour: iMsg.data.on.time_hour,
-			time_minute: iMsg.data.on.time_minute
-		},
-		off: {
-			time_hour: iMsg.data.off.time_hour,
-			time_minute: iMsg.data.off.time_minute
-		}
-	};
-
-	this.server.emit('schedule', times);
-};
