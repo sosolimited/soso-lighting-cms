@@ -76,6 +76,17 @@ function SocketServer( iServer ) {
 			that.server.emit('chime', msg);
 		});
 
+		socket.on('set color', function(msg){
+			logger.info(`socketio \`set color\` received (id: ${msg.id}, rgb: ${msg.rgb})`);
+
+			that.server.emit('set color', msg);
+		});
+
+		socket.on('set all colors', function(msg){
+			logger.info(`socketio \`set all colors\` received (num triplets: ${msg.length / 3})`);
+
+			that.server.emit('set all colors', msg);
+		});
 	});
 
 	this.saveState = empty_promise;
