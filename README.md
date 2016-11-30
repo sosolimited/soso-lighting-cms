@@ -53,6 +53,8 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 ]
 ```
 
+**register control app** - Send this immediately after connecting if you are the lighting control application. This ultimately supports a connectivity indicator in the CMS UI. No "de-register" message required. Must resend if you lose connection / reconnect.
+
 ## Server can emit:
 **on** - Turn the lights on.
 
@@ -111,3 +113,7 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
     // ...
 ]
 ```
+
+**control app connected** - Sent to all clients when a lighting control app registers itself.
+
+**control app disconnected** - Sent to all clients when a lighting control app that has previously registered itself disconnects from the server. If multiple clients have registered, the message is not sent until all have disconnected.

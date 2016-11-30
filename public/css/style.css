@@ -3,6 +3,7 @@
 html {
 	font-family: Helvetica, Arial, Sans-Serif;
 	font-size: 18px;
+	letter-spacing: 0.025em;
 }
 
 h1 {
@@ -46,11 +47,15 @@ input:disabled {
 
 .connection[data-status="connecting"]:after {
 	color: orange;
-	content: 'Connecting to socket server...';
+	content: 'Connecting to socket server ...';
+}
+.connection[data-status="control-app-connected"]:after {
+	color: green;
+	content: 'Connected ✓';
 }
 .connection[data-status="connected"]:after {
-	color: green;
-	content: 'Connected to server ✓';
+	color: orange;
+	content: 'Waiting for lighting control app connectivity...';
 }
 .connection[data-status="disconnected"]:after {
 	color: red;
