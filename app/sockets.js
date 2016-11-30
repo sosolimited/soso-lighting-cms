@@ -37,6 +37,11 @@ function SocketServer( iServer ) {
 			socket.emit('current state', state );
 		});
 
+		// tell about connected control app
+		if( that.control_apps > 0 ){
+			socket.emit('control app connected');
+		}
+
 		socket.on('disconnect', function(){
 			logger.info(`io client disconnected (${ that.short(socket) })`);
 
