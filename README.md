@@ -10,11 +10,11 @@ CMS / Web GUI to control lighting applications.
 The server shuttles socketio messages between any controlling clients (e.g. web CMS) and the lighting control app. There are messages the server can receive from controlling clients, and messages the lighting control app should expect to receive from the server. Some messages require/attach meta data. See below for details.
 
 ## Server can receive:
-**on** - turn the lights on
+**on** - Turn the lights on.
 
-**off** - turn the lights off
+**off** - Turn the lights off.
 
-**schedule** - set the on/off schedule (24hr time)
+**schedule** - Set the on/off schedule (24hr time).
 ```json
 {
     "on": {
@@ -28,19 +28,37 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 }
 ```
 
-**chime** - play a special chime as specified by text id
+**chime** - Play a special chime as specified by text id.
 ```json
 {
     "id": "pulse"
 }
 ```
 
+**set color** - Set the color of a single fixture.
+```json
+{
+    "id": 321,
+    "rgb": [255,0,0]
+}
+```
+
+**set all colors** - Set each light fixture individually packed as a flattened list of RGB triplets.
+```javascript
+[
+    255,0,0,
+    100,20,255,
+    0,255,0,
+    // ...
+]
+```
+
 ## Server can emit:
-**on** - turn the lights on
+**on** - Turn the lights on.
 
-**off** - turn the lights off
+**off** - Turn the lights off.
 
-**schedule** - set the on/off schedule (24hr time)
+**schedule** - Set the on/off schedule (24hr time).
 ```json
 {
     "on": {
@@ -54,7 +72,7 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
 }
 ```
 
-**chime** - Play a chime
+**chime** - Play a chime.
 ```json
 {
     "id": "pulse"
@@ -74,4 +92,22 @@ The server shuttles socketio messages between any controlling clients (e.g. web 
         "time_minute": 30
     }
 }
+```
+
+**set color** - Set the color of a single fixture.
+```json
+{
+    "id": 321,
+    "rgb": [255,0,0]
+}
+```
+
+**set all colors** - Set each light fixture individually, packed as a flattened list of RGB triplets.
+```javascript
+[
+    255,0,0,
+    100,20,255,
+    0,255,0,
+    // ...
+]
 ```
