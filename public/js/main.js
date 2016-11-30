@@ -19,6 +19,16 @@
 		$(".connection").attr('data-status', 'disconnected');
 	})
 
+	messaging.on('control app connected', function(){
+		console.log('io control app connected');
+		$(".connection").attr('data-status', 'control-app-connected');
+	});
+
+	messaging.on('control app disconnected', function(){
+		console.log('io control app disconnected');
+		$(".connection").attr('data-status', 'connected');
+	});
+
 	// Add submit event listener to form to prevent default.
 	var form = document.getElementById('on_off_controls');
 	form.addEventListener("submit", formAction(messaging) );

@@ -23,19 +23,35 @@ function SocketServer( iServer ) {
 	if (!(this instanceof SocketServer)) return new SocketServer( iServer );
 	var that = this;
 
+	// support multiple control apps (maybe useful, maybe not)
+	this.control_apps = 0;
+
 	this.server = io.listen( iServer );
-	logger.info('socketio listening');
+	logger.info('io listening');
 
 	this.server.on('connection', function(socket) {
-		logger.info('socketio new client connection');
+		logger.info(`io new client connection (${ that.short(socket) })`);
 
 		// send state to new connection
 		that.getState().then(function(state){
 			socket.emit('current state', state );
 		});
 
+		socket.on('disconnect', function(){
+			logger.info(`io client disconnected (${ that.short(socket) })`);
+
+			if( socket.hasOwnProperty('control_app') ){
+				that.control_apps--;
+
+				if( that.control_apps == 0 ){
+					logger.info('io notifying clients no control apps connected');
+					that.server.emit('control app disconnected');
+				}
+			}
+		});
+
 		socket.on('schedule', function(msg) {
-			logger.info('socketio `schedule` received');
+			logger.info('io `schedule` received');
 
 			that.getState().then(function(state){
 				state.on = msg.on;
@@ -49,7 +65,7 @@ function SocketServer( iServer ) {
 		});
 
 		socket.on('on', function() {
-			logger.info('socketio `on` received');
+			logger.info('io `on` received');
 
 			that.getState().then(function(state){
 				state.mode = 'on';
@@ -60,7 +76,7 @@ function SocketServer( iServer ) {
 		});
 
 		socket.on('off', function(msg) {
-			logger.info('socketio `off` received');
+			logger.info('io `off` received');
 
 			that.getState().then(function(state){
 				state.mode = 'off';
@@ -71,21 +87,33 @@ function SocketServer( iServer ) {
 		});
 
 		socket.on('chime', function(msg) {
-			logger.info('socketio `chime` received (id: ' + msg.id + ')');
+			logger.info('io `chime` received (id: ' + msg.id + ')');
 
 			that.server.emit('chime', msg);
 		});
 
 		socket.on('set color', function(msg){
-			logger.info(`socketio \`set color\` received (id: ${msg.id}, rgb: ${msg.rgb})`);
+			logger.info(`io \`set color\` received (id: ${msg.id}, rgb: ${msg.rgb})`);
 
 			that.server.emit('set color', msg);
 		});
 
 		socket.on('set all colors', function(msg){
-			logger.info(`socketio \`set all colors\` received (num triplets: ${msg.length / 3})`);
+			logger.info(`io \`set all colors\` received (num triplets: ${msg.length / 3})`);
 
 			that.server.emit('set all colors', msg);
+		});
+
+		// Allow a client to identify as lighting app, so the CMS UI can
+		// indicate if the app is available for changes.
+		socket.on('register control app', function(){
+			socket.control_app = true;
+			that.control_apps++;
+
+			logger.info('io control app registered');
+
+			// all sockets except this one
+			socket.broadcast.emit('control app connected');
 		});
 	});
 
@@ -96,3 +124,7 @@ function SocketServer( iServer ) {
 // allow interface for saving/getting state data to be set externally
 SocketServer.prototype.handleSaveState = function(prom){ this.saveState = prom; }
 SocketServer.prototype.handleGetState = function(prom){ this.getState = prom; }
+
+SocketServer.prototype.short = function(socket){
+	return socket.id.slice(0,6);
+}
