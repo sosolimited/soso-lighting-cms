@@ -55,7 +55,7 @@ function SocketServer( iServer ) {
 			}
 		});
 
-		socket.on('schedule', function(msg) {
+		socket.on('schedule', function(msg, done) {
 			logger.info('io `schedule` received');
 
 			that.getState().then(function(state){
@@ -65,7 +65,10 @@ function SocketServer( iServer ) {
 
 				that.server.emit('schedule', { on: state.on, off: state.off });
 
-				that.saveState(state);
+				// callback when saveState completes
+				that.saveState(state).then(function(){
+					done();
+				});
 			});
 		});
 

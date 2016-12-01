@@ -6,6 +6,11 @@ CMS / Web GUI to control lighting applications.
 2. `node server.js`
 3. CMS accessible at [http://127.0.0.1:8080](http://127.0.0.1:8080). Point your socketio client to the same address + port.
 
+# Tests
+There is a basic test suite which covers the socketio server messaging and internal state persistence. When changing a protocol or adding new message types, improve/update `test/socket-test.js`. It's a good idea to run the tests before submitting a PR, or occasionally while you work.
+
+To run tests: `npm test` at the root folder.
+
 # Messaging Protocol
 The server shuttles socketio messages between any controlling clients (e.g. web CMS) and the lighting control app. There are messages the server can receive from controlling clients, and messages the lighting control app should expect to receive from the server. Some messages require/attach meta data. See below for details.
 
