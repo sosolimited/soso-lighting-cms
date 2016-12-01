@@ -4,7 +4,7 @@
   "description": "A basic lighting controls cms.",
   "main": "server.js",
   "scripts": {
-    "test": "mocha tests/socket-test.js"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
