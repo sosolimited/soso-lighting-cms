@@ -1,6 +1,7 @@
 var should = require('should');
 var io = require('socket.io-client');
 
+// note: these tests require running the server as a separate process
 var socketURL = 'http://0.0.0.0:8080';
 
 var options = {
@@ -8,83 +9,132 @@ var options = {
 	'force new connection': true
 };
 
-describe("CMS Socket.io Server", function() {
+describe("CMS socketio server", function() {
+	var cinder_client;
+	var web_client;
 
-	it("Should receive updateOnOffTime and send onOffTime message.", function(done) {
-		var client = io.connect(socketURL, options);
-		var times = {
-			on: {
-				time_hour: 19,
-				time_minute: 30
-			},
-			off: {
-				time_hour: 5,
-				time_minute: 00
-			}
+	beforeEach(function(){
+		cinder_client = io.connect(socketURL, options);
+		web_client = io.connect(socketURL, options);
+	});
+
+	afterEach(function(){
+		cinder_client.disconnect();
+		web_client.disconnect();
+	});
+
+	it("Should emit current state on new connection.", function(done) {
+		web_client.on('current state', function(state){
+			state.should.have.property('mode');
+			state.should.have.propertyByPath('on','time_hour');
+			state.should.have.propertyByPath('on','time_minute');
+			state.should.have.propertyByPath('off','time_hour');
+			state.should.have.propertyByPath('off','time_minute');
+			done();
+		});
+	});
+
+	it("Should relay `on` messages.", function(done) {
+		cinder_client.on('on', function(){
+			done();
+		});
+
+		web_client.emit('on');
+	});
+
+	it("Should relay `off` messages.", function(done) {
+		cinder_client.on('off', function(){
+			done();
+		});
+
+		web_client.emit('off');
+	});
+
+	it("Should relay `chime` messages.", function(done) {
+		cinder_client.on('chime', function(chime){
+			chime.id.should.eql('test chime');
+			done();
+		});
+
+		web_client.emit('chime', {id: 'test chime'});
+	});
+
+	it("Should relay `set color` messages.", function(done) {
+		var c = [255,0,0];
+
+		cinder_client.on('set color', function(msg){
+			msg.id.should.eql(95);
+			msg.rgb.should.eql(c);
+			done();
+		});
+
+		web_client.emit('set color', {id: 95, rgb: c});
+	});
+
+	it("Should relay `set all colors` messages.", function(done) {
+		var c = [255,0,0,255,255,255,0,0,255,0,0,0];
+
+		cinder_client.on('set all colors', function(msg){
+			msg.should.eql(c);
+			done();
+		});
+
+		web_client.emit('set all colors', c);
+	});
+
+	it("Should relay `schedule` messages.", function(done) {
+		var test_schedule = {
+			on: { time_hour: 7, time_minute: 30 },
+			off: { time_hour: 19, time_minute: 0 }
 		};
 
-		client.on('connect', function(data) {
-			client.emit('custom', { description: 'new on and off times', data: times });
+		cinder_client.on('schedule', function(sched){
+			sched.should.eql(test_schedule);
+			done();
 		});
 
-		client.on('onOffTime', function(msg) {
-			msg.response.should.equal("updateOnOffTime received");
-			JSON.stringify(msg.data).should.equal(JSON.stringify(times) );
-			client.disconnect();
-			done();
+		web_client.emit('schedule', test_schedule);
+	});
+
+	it("Should maintain internal cache of current on/off schedule.", function(done) {
+		var test_schedule = {
+			on: { time_hour: 6, time_minute: 0 },
+			off: { time_hour: 18, time_minute: 0 }
+		};
+
+		cinder_client.disconnect();
+
+		web_client.emit('schedule', test_schedule, function(){
+			cinder_client = io.connect(socketURL, options);
+
+			cinder_client.on('current state', function(state){
+				state.on.should.eql(test_schedule.on);
+				state.off.should.eql(test_schedule.off);
+				done();
+			});
 		});
 	});
 
-	it("Should receive turnOn and send on message.", function(done) {
-		var client = io.connect(socketURL, options);
-		var client2 = io.connect(socketURL, options);
+	it("Should notify web client when lighting control app registers.", function(done){
+		cinder_client.disconnect();
 
-		client.on('connect', function(data) {
-			client.emit('alwaysOn', { description: 'turn on lights', data: true });
-		});
-
-		client2.on('on', function(msg) {
-			msg.response.should.equal("turnOn received");
-			msg.data.should.equal(true);
-			client.disconnect();
-			client2.disconnect();
+		web_client.on('control app connected', function(){
 			done();
 		});
+
+		cinder_client = io.connect(socketURL, options);
+		cinder_client.emit('register control app');
 	});
 
-	it("Should receive turnOff and send off message.", function(done) {
-		var client = io.connect(socketURL, options);
-		var client2 = io.connect(socketURL, options);
-
-		client.on('connect', function(data) {
-			client.emit('alwaysOff', { description: 'turn off lights', data: true });
+	it("Should notify web client when lighting control app disconnects.", function(done){
+		web_client.on('control app connected', function(){
+			cinder_client.disconnect();
 		});
 
-		client2.on('off', function(msg) {
-			msg.response.should.equal("turnOff received");
-			msg.data.should.equal(true);
-			client.disconnect();
-			client2.disconnect();
+		web_client.on('control app disconnected', function(){
 			done();
 		});
+
+		cinder_client.emit('register control app');
 	});
-
-	it("Should receive chime and send playChime message.", function(done) {
-		var client = io.connect(socketURL, options);
-		var client2 = io.connect(socketURL, options);
-		var chime = 5
-
-		client.on('connect', function(data) {
-			client.emit('chime', { description: 'play chime associated with this number', data: chime });
-		});
-
-		client2.on('playChime', function(msg) {
-			msg.response.should.equal("chime received");
-			msg.data.should.equal(chime);
-			client.disconnect();
-			client2.disconnect();
-			done();
-		});
-	});
-
 });

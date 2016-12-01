@@ -56,6 +56,24 @@ SimpleDB.prototype.init = function(){
 	});
 }
 
+SimpleDB.prototype.setObjectIfMissing = function(id, data){
+	var that = this;
+
+	return new Promise(function(resolve, reject){
+		that.getObject(id).then(function(){
+			// already exists, don't update
+			resolve();
+		},function(err){
+			// doesn't exist, so set it
+			that.setObject(id, data).then(function(){
+				resolve();
+			}, function(err){
+				reject(err);
+			});
+		});
+	});
+}
+
 SimpleDB.prototype.setObject = function(id, data){
 	var that = this;
 	return new Promise(function(resolve, reject){

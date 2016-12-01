@@ -42,21 +42,11 @@ var socketServer = require('./app/sockets.js')( server );
 db.init().then(function(){
 	// If db does not contain state, save default settings.
 	// This can happen on first time server startup.
-	db.getObject('state').then(function(){
-		logger.info('loaded state.json from disk');
-	},function(err){
-		logger.info("filling state.json file with default configuration");
-
-		db.setObject('state', config.default_state).catch(function(err){
-			logger.error('error while saving default state');
-			throw err;
-		});
-	});
-}, function(err){
+	return db.setObjectIfMissing('state', config.default_state);
+}).catch(function(err){
 	logger.error('error while initializing SimpleDB');
 	throw err;
 });
-
 
 // Let the socket server know how to handle the state.
 // Write to simple JSON object store on disk for persistence
